@@ -1,5 +1,8 @@
 package lexer;
 
+import utils.AlphabetHelper;
+import utils.PeekIterator;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,6 +17,37 @@ public class Token {
     TokenType _type;
     String _value;
 
+
+    /**
+     * 提取变量或关键字
+     *
+     * @param it
+     * @return
+     */
+    public static Token makeVarOrKeyword(PeekIterator<Character> it) {
+        StringBuilder symbol = new StringBuilder();
+
+        while (it.hasNext()) {
+            Character lookahead = it.peek();
+            if (AlphabetHelper.isLiteral(lookahead)) {
+                symbol.append(lookahead);
+            } else {
+                break;
+            }
+            it.next();
+        }
+
+        // 判断是关键字还是变量
+        String symbolString = symbol.toString();
+        if (Keywords.isKeyword(symbolString)) {
+            return new Token(TokenType.KEYWORD, symbolString);
+        }
+        if (symbolString.equals("true") || symbolString.equals("false")) {
+            return new Token(TokenType.BOOLEAN, symbolString);
+        }
+        return new Token(TokenType.VARIABLE, symbolString);
+    }
+
     public Token(TokenType _type, String _value) {
         this._type = _type;
         this._value = _value;
@@ -21,6 +55,10 @@ public class Token {
 
     public TokenType get_type() {
         return _type;
+    }
+
+    public String get_value() {
+        return _value;
     }
 
     @Override
