@@ -48,6 +48,33 @@ public class Token {
         return new Token(TokenType.VARIABLE, symbolString);
     }
 
+    public static Token makeString(PeekIterator<Character> it) throws LexicalException {
+        StringBuilder symbol = new StringBuilder();
+        int state = 0;
+        while (it.hasNext()) {
+            char c = it.next();
+            switch (state) {
+                case 0:
+                    state = c == '\'' ? 2 : 1;
+                    symbol.append(c);
+                    break;
+                case 1:
+                    symbol.append(c);
+                    if (c == '"') {
+                        return new Token(TokenType.STRING, symbol.toString());
+                    }
+                    break;
+                case 2:
+                    symbol.append(c);
+                    if (c == '\'') {
+                        return new Token(TokenType.STRING, symbol.toString());
+                    }
+                    break;
+            }
+        }
+        throw new LexicalException("Unexpected Error");
+    }
+
     public Token(TokenType _type, String _value) {
         this._type = _type;
         this._value = _value;

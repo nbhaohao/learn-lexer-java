@@ -27,4 +27,22 @@ public class TokenTests {
         Token token3 = Token.makeVarOrKeyword(it3);
         assertToken(token3, "abc", TokenType.VARIABLE);
     }
+
+    @Test
+    void test_makeString() {
+        PeekIterator<Character> it1 = new PeekIterator<>("\"abc abc\"".chars().mapToObj(c -> (char) c));
+        try {
+            Token token1 = Token.makeString(it1);
+            assertToken(token1, "\"abc abc\"", TokenType.STRING);
+        } catch (LexicalException e) {
+            e.printStackTrace();
+        }
+        PeekIterator<Character> it2 = new PeekIterator<>("'abc abc'".chars().mapToObj(c -> (char) c));
+        try {
+            Token token2 = Token.makeString(it2);
+            assertToken(token2, "'abc abc'", TokenType.STRING);
+        } catch (LexicalException e) {
+            e.printStackTrace();
+        }
+    }
 }
