@@ -61,4 +61,14 @@ public class TokenTests {
         Token token4 = Token.makeOperator(it2);
         assertToken(token4, "*=", TokenType.OPERATOR);
     }
+
+    @Test
+    void test_makeNumber() throws LexicalException {
+        String[] tests = {"00001 xz", "0.2 322", "1 abc", "+0 aa", "-0 aa", ".3 ccc", "7788.96 123", "-100.22*3"};
+        for (int i = 0; i < tests.length; i++) {
+            PeekIterator<Character> it = new PeekIterator<>(tests[i].chars().mapToObj(c -> (char) c));
+            Token token = Token.makeNumber(it);
+            assertToken(token, tests[i].split("[* ]+")[0], tests[i].indexOf('.') != -1 ? TokenType.FLOAT : TokenType.INTEGER);
+        }
+    }
 }

@@ -107,6 +107,75 @@ public class Token {
         throw new LexicalException("Unexpected Error");
     }
 
+    public static Token makeNumber(PeekIterator<Character> it) throws LexicalException {
+        StringBuilder symbol = new StringBuilder();
+        int state = 0;
+        while (it.hasNext()) {
+            char lookahead = it.peek();
+            switch (state) {
+                case 0:
+                    if (lookahead == '0') {
+                        state = 1;
+                    } else if (AlphabetHelper.isNumber(lookahead)) {
+                        state = 2;
+                    } else if (lookahead == '+' || lookahead == '-') {
+                        state = 3;
+                    } else if (lookahead == '.') {
+                        state = 5;
+                    }
+                    break;
+                case 1:
+                    if (lookahead == '0') {
+                        state = 1;
+                    } else if (AlphabetHelper.isNumber(lookahead)) {
+                        state = 2;
+                    } else if (lookahead == '.') {
+                        state = 4;
+                    } else {
+                        return new Token(TokenType.INTEGER, symbol.toString());
+                    }
+                    break;
+                case 2:
+                    if (AlphabetHelper.isNumber(lookahead)) {
+                        state = 2;
+                    } else if (lookahead == '.') {
+                        state = 4;
+                    } else {
+                        return new Token(TokenType.INTEGER, symbol.toString());
+                    }
+                    break;
+                case 3:
+                    if (AlphabetHelper.isNumber(lookahead)) {
+                        state = 2;
+                    } else if (lookahead == '.') {
+                        state = 5;
+                    } else {
+                        throw new LexicalException(lookahead);
+                    }
+                    break;
+                case 4:
+                    if (lookahead == '.') {
+                        throw new LexicalException(lookahead);
+                    } else if (AlphabetHelper.isNumber(lookahead)) {
+                        state = 4;
+                    } else {
+                        return new Token(TokenType.FLOAT, symbol.toString());
+                    }
+                    break;
+                case 5:
+                    if (AlphabetHelper.isNumber(lookahead)) {
+                        state = 4;
+                    } else {
+                        throw new LexicalException(lookahead);
+                    }
+                    break;
+            }
+            it.next();
+            symbol.append(lookahead);
+        }
+        throw new LexicalException("Unexpected Error");
+    }
+
     public Token(TokenType _type, String _value) {
         this._type = _type;
         this._value = _value;
