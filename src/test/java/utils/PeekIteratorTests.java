@@ -48,7 +48,7 @@ class PeekIteratorTests {
         PeekIterator<Character> it1 = new PeekIterator<>(source.chars().mapToObj(c -> (char) c));
         assertEquals('a', it1.next());
         assertEquals('b', it1.next());
-        it1.pubBack();
+        it1.putBack();
         assertEquals('b', it1.next());
     }
 
@@ -75,7 +75,7 @@ class PeekIteratorTests {
             i++;
         }
         while (i >= 0) {
-            it1.pubBack();
+            it1.putBack();
             i--;
         }
         assertEquals('b', it1.next());

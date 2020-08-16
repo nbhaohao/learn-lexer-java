@@ -1,7 +1,9 @@
 package lexer;
 
 import utils.AlphabetHelper;
+import utils.OperatorHelper.OperatorConfig;
 import utils.PeekIterator;
+import utils.OperatorHelper;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,7 +18,6 @@ public class Token {
     static final List<TokenType> scalarList = Arrays.asList(TokenType.INTEGER, TokenType.FLOAT, TokenType.BOOLEAN, TokenType.STRING);
     TokenType _type;
     String _value;
-
 
     /**
      * 提取变量或关键字
@@ -70,6 +71,37 @@ public class Token {
                         return new Token(TokenType.STRING, symbol.toString());
                     }
                     break;
+            }
+        }
+        throw new LexicalException("Unexpected Error");
+    }
+
+    public static Token makeOperator(PeekIterator<Character> it) throws LexicalException {
+        int state = 0;
+        Character prevOperator = null;
+        while (it.hasNext()) {
+            Character lookahead = it.next();
+            if (state == 0) {
+                if (OperatorHelper.operatorConfigMap.containsKey(lookahead)) {
+                    state = OperatorHelper.operatorConfigMap.get(lookahead).getCode();
+                    prevOperator = lookahead;
+                }
+                if (lookahead == ',' || lookahead == ';') {
+                    return new Token(TokenType.OPERATOR, String.valueOf(lookahead));
+                }
+            } else {
+                OperatorConfig operatorConfig = OperatorHelper.operatorConfigMap.get(prevOperator);
+                if (operatorConfig != null) {
+                    if (Arrays.asList(operatorConfig.getCombineOperators()).contains(lookahead)) {
+                        /*
+                         * '+' -> '++'
+                         * '&' -> '&&' || '&='
+                         */
+                        return new Token(TokenType.OPERATOR, prevOperator + "" + lookahead);
+                    }
+                    it.putBack();
+                    return new Token(TokenType.OPERATOR, String.valueOf(prevOperator));
+                }
             }
         }
         throw new LexicalException("Unexpected Error");

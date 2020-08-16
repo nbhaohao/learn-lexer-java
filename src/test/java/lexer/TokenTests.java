@@ -45,4 +45,20 @@ public class TokenTests {
             e.printStackTrace();
         }
     }
+
+    @Test
+    void test_makeOperator() throws LexicalException {
+        PeekIterator<Character> it1 = new PeekIterator<>("++ +1".chars().mapToObj(c -> (char) c));
+        Token token1 = Token.makeOperator(it1);
+        assertToken(token1, "++", TokenType.OPERATOR);
+        it1.next();
+        Token token2 = Token.makeOperator(it1);
+        assertToken(token2, "+", TokenType.OPERATOR);
+        PeekIterator<Character> it2 = new PeekIterator<>("* *=".chars().mapToObj(c -> (char) c));
+        Token token3 = Token.makeOperator(it2);
+        assertToken(token3, "*", TokenType.OPERATOR);
+        it2.next();
+        Token token4 = Token.makeOperator(it2);
+        assertToken(token4, "*=", TokenType.OPERATOR);
+    }
 }

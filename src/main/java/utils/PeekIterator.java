@@ -31,16 +31,16 @@ public class PeekIterator<T> implements Iterator<T> {
             return _endToken;
         }
         T value = next();
-        pubBack();
+        putBack();
         return value;
     }
 
     /**
      * 根据我们的 next() 方法，
      * 假设 queueCache 中是 A、B、C、D
-     * 则表示 D 是最后拿出来的，所以 pubBack 的时候，要从 D 先放回
+     * 则表示 D 是最后拿出来的，所以 putBack 的时候，要从 D 先放回
      */
-    public void pubBack() {
+    public void putBack() {
         if (queueCache.isEmpty()) {
             return;
         }
