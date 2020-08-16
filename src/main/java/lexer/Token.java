@@ -206,4 +206,12 @@ public class Token {
     public Boolean isScalar() {
         return scalarList.contains(_type);
     }
+
+    public boolean isNumber() {
+        return _type == TokenType.INTEGER || _type == TokenType.FLOAT;
+    }
+
+    public boolean isOperator() {
+        return _type == TokenType.OPERATOR;
+    }
 }
